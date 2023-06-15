@@ -130,22 +130,22 @@ namespace Simple_Banking_System.Views
 
         public void CreateNewAccount()
         {
-            Console.WriteLine("Let's create your new account:");
+            ClearAndContinue();
+            Console.WriteLine("\n\nLet's create your new account:\n");
             while(true)
             {
-                ClearAndContinue();
                 var (value, captured) = AskForSimpleValue<string>("\nInsert your desired account name, ");
                 if (captured && value != null)
                 {
                     Account acc = new Account(value, default);
                     if (_store.AddAccount(acc))
                     {
-                        Console.WriteLine($"Account created successfully. \nYour new account data is:\n{acc}");
+                        Console.WriteLine($"\nAccount created successfully. \nYour new account data is:\n{acc}");
 
                         return;
                     } else
                     {
-                        Console.WriteLine("Error setting up your new account. Please try again later...");
+                        Console.WriteLine("\nError setting up your new account. Please try again later...");
 
                         return;
                     }
@@ -188,11 +188,14 @@ namespace Simple_Banking_System.Views
                     {
                         try
                         {
-                            if (_store.DoDeposit(accNumber, amountToDeposit))
+                            var (success, acc) = _store.DoDeposit(accNumber, amountToDeposit);
+                            if (success)
                             {
-                                Console.WriteLine(@$"
-                                    Amount successfully added to your account No. {accNumber}. 
-                                    Amount added: {amountToDeposit}.");
+                                Console.WriteLine(@$"Amount successfully added to your account No. {accNumber}. 
+                                    Amount added: {amountToDeposit}.
+                                    Account updated details:
+                                    {acc}
+                                    ");
 
                                 return;
                             }
@@ -265,13 +268,19 @@ namespace Simple_Banking_System.Views
                     {
                         try
                         {
-                            if (_store.DoTransfer(sourceAccNumber, targetAccNumber, amountToTransfer))
+                            var (success, sourceAcc, destAcc) = _store.DoTransfer(sourceAccNumber, targetAccNumber, amountToTransfer);
+                            if (success)
                             {
-                                Console.WriteLine(@$"
-                                    Amount successfully transferred between the following accounts:
+                                Console.WriteLine(@$"Amount successfully transferred between the following accounts:
                                         Source Account No. {sourceAccNumber}
                                         Target Account No. {targetAccNumber}
-                                    Amount transfered: {amountToTransfer}.");
+                                        Amount transfered: {amountToTransfer}.
+                                        
+                                        Updated accounts details:
+                                        Source account:
+                                        {sourceAcc}
+                                        Destination account:
+                                        {destAcc}");
 
                                 return;
                             }
@@ -335,11 +344,14 @@ namespace Simple_Banking_System.Views
                     {
                         try
                         {
-                            if (_store.DoWithdraw(accNumber, amountToWithdraw))
+                            var (success, acc) = _store.DoWithdraw(accNumber, amountToWithdraw);
+                            if (success)
                             {
-                                Console.WriteLine(@$"
-                                    Amount successfully taken from your account No. {accNumber}. 
-                                    Amount taken: {amountToWithdraw}.");
+                                Console.WriteLine(@$"Amount successfully taken from your account No. {accNumber}. 
+                                    Amount taken: {amountToWithdraw}.
+                                    
+                                    Updated account details:
+                                    {acc}");
 
                                 return;
                             }
