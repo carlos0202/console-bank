@@ -56,6 +56,8 @@ public class Account : IAccount, IEntity
 
 public record AccountRecord(Guid Id, string Name, double Number, decimal Balance, DateTime DateCreated, DateTime LastUpdated)
 {
+    public AccountRecord(Account acc) : this(acc.Id, acc.Name, acc.Number, acc.Balance, acc.Created, acc.LastUpdated) {}
+
     public override string ToString()
     {
         return $@"

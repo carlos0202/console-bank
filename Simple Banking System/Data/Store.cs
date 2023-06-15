@@ -40,7 +40,7 @@ namespace Simple_Banking_System.Data
             return true;
         }
 
-        public bool DoDeposit(double accountNumber, decimal amount)
+        public (bool, AccountRecord?) DoDeposit(double accountNumber, decimal amount)
         {
             if(amount <= 0)
             {
@@ -50,21 +50,21 @@ namespace Simple_Banking_System.Data
 
             if (!IsAccountFound(accountNumber))
             {
-                return false;
+                return (false, null);
             }
 
             var account = _instance.AccountNumbersLookup[accountNumber];
             account.Balance += amount;
             account.LastUpdated = DateTime.UtcNow;
 
-            return true;
+            return (true, new AccountRecord(account));
         }
 
-        public bool DoWithdraw(double accountNumber, decimal amount)
+        public (bool, AccountRecord?) DoWithdraw(double accountNumber, decimal amount)
         {
             if (!IsAccountFound(accountNumber))
             {
-                return false;
+                return (false, null);
             }
 
             var account = _instance.AccountNumbersLookup[accountNumber];
@@ -77,10 +77,11 @@ namespace Simple_Banking_System.Data
             account.Balance -= amount;
             account.LastUpdated = DateTime.UtcNow;
 
-            return true;
+            return (true, new AccountRecord(account));
         }
 
-        public bool DoTransfer(double sourceAccountNumber, double destinationAccountNumber, decimal amount)
+        public (bool success, AccountRecord source, AccountRecord destination) DoTransfer(double sourceAccountNumber, 
+            double destinationAccountNumber, decimal amount)
         {
             if (!IsAccountFound(sourceAccountNumber)) 
             {
@@ -105,7 +106,7 @@ namespace Simple_Banking_System.Data
             destinationAccount.Balance += amount;
             destinationAccount.LastUpdated = DateTime.UtcNow;
 
-            return true;
+            return (true, new AccountRecord(sourceAccount), new AccountRecord(destinationAccount));
         }
 
         public bool DeleteAccount(double accountNumber)
@@ -126,7 +127,7 @@ namespace Simple_Banking_System.Data
             {
                 var acc = _instance.AccountNumbersLookup[accountNumber];
 
-                return new AccountRecord(acc.Id, acc.Name, acc.Number, acc.Balance, acc.Created, acc.LastUpdated);
+                return new AccountRecord(acc);
             }
 
             throw new Exception($"Account data was not found with the account number provided: {accountNumber}.");
