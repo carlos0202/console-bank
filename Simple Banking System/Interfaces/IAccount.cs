@@ -2,7 +2,7 @@
 
 public interface IAccount
 {
-    int Number { get; }
+    double Number { get; }
     string Name { get; }
-    decimal Balance { get; set; }
+    decimal Balance { get; }
 }

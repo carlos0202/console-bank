@@ -1,4 +1,4 @@
-﻿//namespace Simple_Banking_System;
+//namespace Simple_Banking_System.Views;
 
 //public class App: Singleton<App>
 //{
